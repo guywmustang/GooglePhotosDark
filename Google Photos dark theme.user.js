@@ -1,18 +1,31 @@
 // ==UserScript==
 // @name         Google Photos dark theme
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.4
 // @description  A darker look
 // @author       You
 // @match        https://photos.google.com/*
 // @icon         https://www.google.com/s2/favicons?domain=google.com
-// @require https://git.io/waitForKeyElements.js
 // @grant        GM_addStyle
-// @run-at       document-idle
+// @run-at       document-start
 // ==/UserScript==
 
 (function () {
     'use strict';
+
+    function addInitialStyle() {
+        GM_addStyle(`
+            /* top bar */
+            .QtDoYb {
+            background-color: black;
+            }
+
+            /* background for main page & side bar */
+            body, .wDSX5e {
+            background-color: #252525;
+            }
+        `);
+    }
 
     function addStyle() {
 
@@ -55,42 +68,55 @@
             a.DOAbib:hover {
             background-color: yellow;
             }
+
+            /* Album page styles */
+            div.gN5aAe {
+            background-color: #252525;
+            }
+
+            div.mfQCMe, div.UV4Xae {
+            color: #dddddd;
+            }
         ` );
     }
 
     var oldHref = document.location.href;
 
     window.onload = function() {
-    
+
         var
              bodyList = document.querySelector("body")
-    
+
             ,observer = new MutationObserver(function(mutations) {
-    
+
                 mutations.forEach(function(mutation) {
-    
+
                     if (oldHref != document.location.href) {
-    
+
                         oldHref = document.location.href;
-    
+
                         /* Changed ! your code here */
                         setTimeout(addStyle, 250);
-    
+
                     }
-    
+
                 });
-    
+
             });
-    
+
         var config = {
             childList: true,
             subtree: true
         };
-    
+
         observer.observe(bodyList, config);
-    
+
     };
 
-    addStyle();
+    // Attach initial background colors to get a dark mode at initial load
+    addInitialStyle();
+
+    // finally once the page is loaded, apply the full dark style
+    window.onload = function() { addStyle(); }
 
 })();
